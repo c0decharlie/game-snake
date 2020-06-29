@@ -4,6 +4,7 @@ export class Snake {
     private $instance: HTMLElement;
     private direction: 'top' | 'right' | 'down' | 'left' = 'down';
     private moveInterval: number;
+    private moveListener;
 
     constructor() {}
 
@@ -46,7 +47,7 @@ export class Snake {
                 break;
             case 'down':
                 newPosition = (this.getPosition().top + SNAKE_CONFIG.DIMENSIONS.HEIGHT);
-                // decrease new position by snake width
+                // increase new position by snake height
                 if ((newPosition + SNAKE_CONFIG.DIMENSIONS.HEIGHT) > BOARD_DIMENSIONS.HEIGHT) {
                     return this.crash();
                 }
@@ -62,7 +63,7 @@ export class Snake {
         }
     }
 
-    crash() {
+    crash(): void {
         clearInterval(this.moveInterval);
         console.log('game over');
     }
@@ -72,15 +73,27 @@ export class Snake {
             console.log(code)
             switch(code) {
                 case 'ArrowUp':
+                    if (this.direction === 'down') {
+                        return;
+                    }
                     this.direction = 'top';
                     break;
                 case 'ArrowLeft':
+                    if (this.direction === 'right') {
+                        return;
+                    }
                     this.direction = 'left';
                     break;
                 case 'ArrowRight':
+                    if (this.direction === 'left') {
+                        return;
+                    }
                     this.direction = 'right';
                     break;
                 case 'ArrowDown':
+                    if (this.direction === 'top') {
+                        return;
+                    }
                     this.direction = 'down';
                     break;
             }
