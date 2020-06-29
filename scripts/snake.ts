@@ -11,8 +11,8 @@ export class Snake {
     create(): void {
         const $snake = document.createElement('div');
         $snake.classList.add('snake');
-        $snake.style.top = '0px';
-        $snake.style.left = '0px';
+        $snake.style.top = SNAKE_CONFIG.STARTING_POINT.TOP + 'px';
+        $snake.style.left = SNAKE_CONFIG.STARTING_POINT.LEFT + 'px';
         this.$instance = $snake;
     }
 
@@ -102,6 +102,7 @@ export class Snake {
 
     start(): void {
         this.setupDirectionListener();
-        this.moveInterval = setInterval(this.move.bind(this), 300);
+        setTimeout(() => 
+            this.moveInterval = setInterval(this.move.bind(this), 300), 500);
     }
 }
