@@ -1,3 +1,5 @@
+import { SNAKE_CONFIG, BOARD_DIMENSIONS } from './config';
+
 export class Snake {
     private $instance: HTMLElement;
     private direction: 'top' | 'right' | 'down' | 'left' = 'down';
@@ -25,20 +27,44 @@ export class Snake {
     }
 
     move(): void {
+        let newPosition: number;
         switch(this.direction) {
             case 'top':
-                this.$instance.style.top = (this.getPosition().top - 30) + 'px';
+                newPosition = (this.getPosition().top - SNAKE_CONFIG.DIMENSIONS.HEIGHT);
+                if (newPosition < 0) {
+                    return this.crash();
+                }
+                this.$instance.style.top = newPosition + 'px';
                 break;
-            case 'right': 
-                this.$instance.style.left = (this.getPosition().left + 30) + 'px';
+                case 'right': 
+                newPosition = (this.getPosition().left + SNAKE_CONFIG.DIMENSIONS.WIDTH);
+                // increase new position by snake width
+                if ((newPosition + SNAKE_CONFIG.DIMENSIONS.WIDTH) > BOARD_DIMENSIONS.WIDTH) {
+                    return this.crash();
+                }
+                this.$instance.style.left =  newPosition + 'px';
                 break;
-            case 'down': 
-                this.$instance.style.top = (this.getPosition().top + 30) + 'px';
+            case 'down':
+                newPosition = (this.getPosition().top + SNAKE_CONFIG.DIMENSIONS.HEIGHT);
+                // decrease new position by snake width
+                if ((newPosition + SNAKE_CONFIG.DIMENSIONS.HEIGHT) > BOARD_DIMENSIONS.HEIGHT) {
+                    return this.crash();
+                }
+                this.$instance.style.top = newPosition + 'px';
                 break;
             case 'left': 
-                this.$instance.style.left = (this.getPosition().left - 30) + 'px';
+                newPosition = (this.getPosition().left - SNAKE_CONFIG.DIMENSIONS.WIDTH);
+                if (newPosition < 0) {
+                    return this.crash();
+                }
+                this.$instance.style.left = newPosition + 'px';
                 break;
         }
+    }
+
+    crash() {
+        clearInterval(this.moveInterval);
+        console.log('game over');
     }
 
     setupDirectionListener(): void {
