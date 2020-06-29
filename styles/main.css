@@ -1,0 +1,23 @@
+.board {
+    margin: 0 auto;
+    border: solid red;
+    height: 480px;
+    width: 480px;
+    background: lightgrey;
+    position: relative;
+}
+
+.food {
+    width: 30px;
+    height: 30px;
+    background: tomato;
+}
+
+.snake {
+    width: 30px;
+    height: 30px;
+    background: greenyellow;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
