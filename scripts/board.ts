@@ -1,3 +1,4 @@
+import { eventBus } from './eventbus';
 import { Snake } from './snake';
 
 export class Board {
@@ -12,6 +13,7 @@ export class Board {
         }
     }
 
+    // TODO: Move the game control stuff to game controller later
     create() {
         this.$instance = document.createElement('div');
         this.$instance.classList.add('board');
@@ -22,7 +24,13 @@ export class Board {
         this.$instance.appendChild(snake.getSnake());
         snake.start();
 
+        
         const $gameContainer = document.getElementById(this.config.container);
         $gameContainer.appendChild(this.$instance);
+
+        eventBus.on('snake-grow', snakePart => {
+            console.log('board snake grow')
+            this.$instance.appendChild(snakePart)
+        });
     }
 }
