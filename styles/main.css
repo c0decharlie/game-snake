@@ -20,6 +20,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 1000;
 }
 
 .snake-part {
@@ -27,4 +28,13 @@
     height: 30px;
     background-color: greenyellow;
     position: absolute;
+    z-index: 1000;
+}
+
+.food {
+    background-color: black;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    z-index: 500;
 }

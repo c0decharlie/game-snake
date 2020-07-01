@@ -1,17 +1,13 @@
+import cloneDeep from 'lodash.clonedeep';
 
 import { SnakePart } from './interfaces/snake.interface';
 import { SNAKE_CONFIG, BOARD_DIMENSIONS } from './config';
 import { eventBus } from './eventbus';
 
-import cloneDeep from 'lodash.clonedeep';
-
 export class Snake {
     private $instance: HTMLElement;
     private direction: 'top' | 'right' | 'down' | 'left' = 'down';
-    private moveInterval: number;
     private parts: SnakePart[] = [];
-
-    constructor() {}
 
     create(): void {
         const $snake = document.createElement('div');
@@ -35,6 +31,10 @@ export class Snake {
         return this.$instance;
     }
 
+    getHeadPosition(): { top: number, left: number } {
+        return this.parts[0].position;
+    }
+
     getPosition(): { top: number, left: number } {
         return {
             top: parseInt(this.$instance.style.top),
@@ -42,7 +42,7 @@ export class Snake {
         }
     }
 
-    move(): void {
+    public move(): void {
         let newPosition: number;
         switch(this.direction) {
             case 'top':
@@ -78,7 +78,11 @@ export class Snake {
         }
     }
 
-    updatePartPosition(direction: 'top' | 'left', value: number): void {
+    eat(): void {
+        this.grow();
+    }
+
+    private updatePartPosition(direction: 'top' | 'left', value: number): void {
         
         this.parts = this.parts.reduce((acc, part, i) => {
             if (!acc[i - 1]) {
@@ -115,11 +119,10 @@ export class Snake {
     }
 
     crash(): void {
-        clearInterval(this.moveInterval);
-        console.log('game over');
+        eventBus.emit('snake-crash');
     }
 
-    setupDirectionListener(): void {
+    private setupDirectionListener(): void {
         window.addEventListener('keydown', ({ code }) => {
             switch(code) {
                 case 'ArrowUp':
@@ -152,7 +155,7 @@ export class Snake {
 
     start(): void {
         this.setupDirectionListener();
-        setTimeout(() => 
-            this.moveInterval = setInterval(this.move.bind(this), 300), 500);
+        // setTimeout(() => 
+        //     this.moveInterval = setInterval(this.move.bind(this), 300), 500);
     }
 }
