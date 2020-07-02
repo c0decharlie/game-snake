@@ -1,16 +1,10 @@
 export class Food {
-    constructor(private position) {}
-
-    spawn(): HTMLElement {
+    public  static spawn(position): HTMLElement {
         const $food = document.createElement('div');
         $food.classList.add('food');
         // TODO: make this values random
-        $food.style.top = this.position.top + 'px';
-        $food.style.left = this.position.left + 'px';
+        $food.style.top = position.top + 'px';
+        $food.style.left = position.left + 'px';
         return $food;
-    }
-
-    public getPosition() {
-        return this.position;
     }
 }
