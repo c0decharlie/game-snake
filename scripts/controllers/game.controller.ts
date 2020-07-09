@@ -8,20 +8,28 @@ export class GameController {
     private board: Board;
     private moveInterval: number; 
 
-    constructor(boardConfig) {
+    constructor(private config) {
         this.snake = new Snake();
-        this.board = new Board(boardConfig);
+        this.board = new Board(config);
     }
     
-    init() {
+    public createGame() {
         this.board.appendElement(this.snake.getSnake());
 
-        const $gameContainer = document.getElementById('game-container');
+        const $gameContainer = document.getElementById(this.config.container);
         $gameContainer.appendChild(this.board.getInstance());
 
-        let foodPosition = getRandomPosition();
+        const foodPosition = getRandomPosition();
         this.board.appendElement(Food.spawn(foodPosition));
 
+        this.setupGameListeners();
+    }
+
+    public startGame() {
+        this.startMovement();
+    }
+
+    private startMovement() {
         setTimeout(() =>
             this.moveInterval = setInterval(() => {
                 this.snake.start();
@@ -29,6 +37,7 @@ export class GameController {
 
                 const snakeCurrentPosition = this.snake.getHeadPosition();
                 // check if snake is on same place as food
+                let foodPosition = this.board.getElementPosition('.food');
                 const isOnSamePosition = foodPosition.top === snakeCurrentPosition.top 
                     && foodPosition.left === snakeCurrentPosition.left;
 
@@ -39,7 +48,9 @@ export class GameController {
                     this.board.appendElement(Food.spawn(foodPosition));
                 }
             }, 300), 500);
+    }
 
+    private setupGameListeners() {
         eventBus.on('snake-grow', snakePart => {
             console.log('board snake grow')
             this.board.appendElement(snakePart)

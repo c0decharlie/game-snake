@@ -1,6 +1,8 @@
 import { GameController } from './controllers/game.controller';
 
-new GameController({
+const gameController = new GameController({
     container: 'game-container',
     borderWidth: 2
-}).init();
+});
+gameController.createGame();
+gameController.startGame();

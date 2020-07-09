@@ -29,4 +29,12 @@ export class Board {
     getInstance(): HTMLElement {
         return this.$instance;
     }
+
+    getElementPosition(selector: string): { top: number, left: number} {
+        const element: HTMLElement = this.$instance.querySelector(selector);
+        return {
+            top: parseInt(element.style.top),
+            left: parseInt(element.style.left)        
+        }
+    }
 }
