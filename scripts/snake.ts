@@ -9,6 +9,10 @@ export class Snake {
     private direction: 'top' | 'right' | 'down' | 'left' = 'down';
     private parts: SnakePart[] = [];
 
+    constructor() {
+        this.create();
+    }
+
     create(): void {
         const $snake = document.createElement('div');
 
@@ -83,7 +87,6 @@ export class Snake {
     }
 
     private updatePartPosition(direction: 'top' | 'left', value: number): void {
-        
         this.parts = this.parts.reduce((acc, part, i) => {
             if (!acc[i - 1]) {
                 const partClone = cloneDeep(part);

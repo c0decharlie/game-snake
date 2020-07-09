@@ -1,6 +1,6 @@
-import { Board } from './board';
+import { GameController } from './controllers/game.controller';
 
-new Board({
+new GameController({
     container: 'game-container',
     borderWidth: 2
-}).create();
+}).init();
