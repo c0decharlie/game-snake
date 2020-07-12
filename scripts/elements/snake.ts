@@ -1,8 +1,11 @@
 import cloneDeep from 'lodash.clonedeep';
 
+import { Position } from './../interfaces/position.interface';
 import { SnakePart } from '../interfaces/snake.interface';
+
 import { SNAKE_CONFIG, BOARD_DIMENSIONS } from '../config';
 import { eventBus } from '../eventbus';
+import { comparePositionSame } from '../helpers';
 
 export class Snake {
     private $instance: HTMLElement;
@@ -35,48 +38,64 @@ export class Snake {
         return this.$instance;
     }
 
-    getHeadPosition(): { top: number, left: number } {
+    getHeadPosition(): Position {
         return this.parts[0].position;
     }
 
-    getPosition(): { top: number, left: number }[] {
+    getPosition(): Position[] {
         return this.parts.map(part => part.position);
     }
 
     public move(): void {
         let newPosition: number;
+        let isCollisionWithPart: boolean;
+        let newHeadPosition: Position;
         switch(this.direction) {
             case 'top':
                 newPosition = (this.getHeadPosition().top - SNAKE_CONFIG.DIMENSIONS.HEIGHT);
-                if (newPosition < 0) {
+                newHeadPosition = { top: newPosition, left: this.getHeadPosition().left }
+                isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
+                if (newPosition < 0 || isCollisionWithPart) {
                     return this.crash();
                 }
                 this.updatePartPosition('top', newPosition);
                 break;
                 case 'right': 
                 newPosition = (this.getHeadPosition().left + SNAKE_CONFIG.DIMENSIONS.WIDTH);
+                newHeadPosition = { left: newPosition, top: this.getHeadPosition().top }
+                isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
                 // increase new position by snake width
-                if ((newPosition + SNAKE_CONFIG.DIMENSIONS.WIDTH) > BOARD_DIMENSIONS.WIDTH) {
+                if ((newPosition + SNAKE_CONFIG.DIMENSIONS.WIDTH) > BOARD_DIMENSIONS.WIDTH || isCollisionWithPart) {
                     return this.crash();
                 }
                 this.updatePartPosition('left', newPosition);
                 break;
             case 'down':
                 newPosition = (this.getHeadPosition().top + SNAKE_CONFIG.DIMENSIONS.HEIGHT);
+                newHeadPosition = { top: newPosition, left: this.getHeadPosition().left }
+                isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
                 // increase new position by snake height
-                if ((newPosition + SNAKE_CONFIG.DIMENSIONS.HEIGHT) > BOARD_DIMENSIONS.HEIGHT) {
+                if ((newPosition + SNAKE_CONFIG.DIMENSIONS.HEIGHT) > BOARD_DIMENSIONS.HEIGHT || isCollisionWithPart) {
                     return this.crash();
                 }
                 this.updatePartPosition('top', newPosition);
                 break;
             case 'left': 
                 newPosition = (this.getHeadPosition().left - SNAKE_CONFIG.DIMENSIONS.WIDTH);
-                if (newPosition < 0) {
+                newHeadPosition = { left: newPosition, top: this.getHeadPosition().top }
+                isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
+                if (newPosition < 0 || isCollisionWithPart) {
                     return this.crash();
                 }
                 this.updatePartPosition('left', newPosition);
                 break;
         }
+    }
+
+    private checkIsCollisionWithPart(position: Position): boolean {
+        return this.parts
+            .map(part => part.position)
+            .some(partPosition => comparePositionSame(position, partPosition));
     }
 
     eat(): void {
