@@ -1,8 +1,8 @@
 import cloneDeep from 'lodash.clonedeep';
 
-import { SnakePart } from './interfaces/snake.interface';
-import { SNAKE_CONFIG, BOARD_DIMENSIONS } from './config';
-import { eventBus } from './eventbus';
+import { SnakePart } from '../interfaces/snake.interface';
+import { SNAKE_CONFIG, BOARD_DIMENSIONS } from '../config';
+import { eventBus } from '../eventbus';
 
 export class Snake {
     private $instance: HTMLElement;

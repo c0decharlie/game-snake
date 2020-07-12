@@ -1,7 +1,7 @@
 import { eventBus } from './../eventbus';
-import { Food } from './../food';
-import { Board } from './../board';
-import { Snake } from './../snake';
+import { Food } from '../elements/food';
+import { Board } from '../elements/board';
+import { Snake } from '../elements/snake';
 
 export class GameController {
     private snake: Snake;
