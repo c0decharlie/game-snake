@@ -39,25 +39,22 @@ export class Snake {
         return this.parts[0].position;
     }
 
-    getPosition(): { top: number, left: number } {
-        return {
-            top: parseInt(this.$instance.style.top),
-            left: parseInt(this.$instance.style.left)
-        }
+    getPosition(): { top: number, left: number }[] {
+        return this.parts.map(part => part.position);
     }
 
     public move(): void {
         let newPosition: number;
         switch(this.direction) {
             case 'top':
-                newPosition = (this.getPosition().top - SNAKE_CONFIG.DIMENSIONS.HEIGHT);
+                newPosition = (this.getHeadPosition().top - SNAKE_CONFIG.DIMENSIONS.HEIGHT);
                 if (newPosition < 0) {
                     return this.crash();
                 }
                 this.updatePartPosition('top', newPosition);
                 break;
                 case 'right': 
-                newPosition = (this.getPosition().left + SNAKE_CONFIG.DIMENSIONS.WIDTH);
+                newPosition = (this.getHeadPosition().left + SNAKE_CONFIG.DIMENSIONS.WIDTH);
                 // increase new position by snake width
                 if ((newPosition + SNAKE_CONFIG.DIMENSIONS.WIDTH) > BOARD_DIMENSIONS.WIDTH) {
                     return this.crash();
@@ -65,7 +62,7 @@ export class Snake {
                 this.updatePartPosition('left', newPosition);
                 break;
             case 'down':
-                newPosition = (this.getPosition().top + SNAKE_CONFIG.DIMENSIONS.HEIGHT);
+                newPosition = (this.getHeadPosition().top + SNAKE_CONFIG.DIMENSIONS.HEIGHT);
                 // increase new position by snake height
                 if ((newPosition + SNAKE_CONFIG.DIMENSIONS.HEIGHT) > BOARD_DIMENSIONS.HEIGHT) {
                     return this.crash();
@@ -73,7 +70,7 @@ export class Snake {
                 this.updatePartPosition('top', newPosition);
                 break;
             case 'left': 
-                newPosition = (this.getPosition().left - SNAKE_CONFIG.DIMENSIONS.WIDTH);
+                newPosition = (this.getHeadPosition().left - SNAKE_CONFIG.DIMENSIONS.WIDTH);
                 if (newPosition < 0) {
                     return this.crash();
                 }

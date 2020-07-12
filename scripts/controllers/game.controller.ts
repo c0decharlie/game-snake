@@ -19,7 +19,7 @@ export class GameController {
         const $gameContainer = document.getElementById(this.config.container);
         $gameContainer.appendChild(this.board.getInstance());
 
-        const foodPosition = getRandomPosition();
+        const foodPosition = this.generateFoodPosition();
         this.board.appendElement(Food.spawn(foodPosition));
 
         this.setupGameListeners();
@@ -44,10 +44,26 @@ export class GameController {
                 if (isOnSamePosition) {
                     this.snake.eat();
                     document.querySelector('.food').remove();
-                    foodPosition = getRandomPosition();
+                    foodPosition = this.generateFoodPosition();
                     this.board.appendElement(Food.spawn(foodPosition));
                 }
             }, 300), 500);
+    }
+
+    private generateFoodPosition() {
+        const generatedPosition = getRandomPosition();
+        const snakePartsPosition = this.snake.getPosition();
+
+        const isPositionSame = snakePartsPosition.some(partPosition => 
+            partPosition.top === generatedPosition.top 
+            && partPosition.left === generatedPosition.left
+        );
+        
+        if (isPositionSame) {
+            return this.generateFoodPosition();
+        }
+
+        return generatedPosition;
     }
 
     private setupGameListeners() {
