@@ -7,16 +7,27 @@ import { SNAKE_CONFIG, BOARD_DIMENSIONS } from '../config';
 import { eventBus } from '../eventbus';
 import { comparePositionSame } from '../helpers';
 
+enum DIRECTIONS {
+    TOP,
+    RIGHT,
+    DOWN,
+    LEFT
+}
+
 export class Snake {
     private $instance: HTMLElement;
-    private direction: 'top' | 'right' | 'down' | 'left' = 'down';
+    private direction:  DIRECTIONS = DIRECTIONS.DOWN;
     private parts: SnakePart[] = [];
 
     constructor() {
         this.create();
     }
 
-    create(): void {
+    public start(): void {
+        this.setupDirectionListener();
+    }
+
+    public create(): void {
         const $snake = document.createElement('div');
 
         $snake.classList.add('snake');
@@ -34,16 +45,20 @@ export class Snake {
         this.$instance = $snake;
     }
 
-    getSnake(): HTMLElement {
+    public getSnake(): HTMLElement {
         return this.$instance;
     }
 
-    getHeadPosition(): Position {
+    public getHeadPosition(): Position {
         return this.parts[0].position;
     }
 
-    getPosition(): Position[] {
+    public getPosition(): Position[] {
         return this.parts.map(part => part.position);
+    }
+
+    public eat(): void {
+        this.grow();
     }
 
     public move(): void {
@@ -51,7 +66,7 @@ export class Snake {
         let isCollisionWithPart: boolean;
         let newHeadPosition: Position;
         switch(this.direction) {
-            case 'top':
+            case DIRECTIONS.TOP:
                 newPosition = (this.getHeadPosition().top - SNAKE_CONFIG.DIMENSIONS.HEIGHT);
                 newHeadPosition = { top: newPosition, left: this.getHeadPosition().left }
                 isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
@@ -60,7 +75,7 @@ export class Snake {
                 }
                 this.updatePartPosition('top', newPosition);
                 break;
-                case 'right': 
+                case DIRECTIONS.RIGHT: 
                 newPosition = (this.getHeadPosition().left + SNAKE_CONFIG.DIMENSIONS.WIDTH);
                 newHeadPosition = { left: newPosition, top: this.getHeadPosition().top }
                 isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
@@ -70,7 +85,7 @@ export class Snake {
                 }
                 this.updatePartPosition('left', newPosition);
                 break;
-            case 'down':
+            case DIRECTIONS.DOWN:
                 newPosition = (this.getHeadPosition().top + SNAKE_CONFIG.DIMENSIONS.HEIGHT);
                 newHeadPosition = { top: newPosition, left: this.getHeadPosition().left }
                 isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
@@ -80,7 +95,7 @@ export class Snake {
                 }
                 this.updatePartPosition('top', newPosition);
                 break;
-            case 'left': 
+            case DIRECTIONS.LEFT: 
                 newPosition = (this.getHeadPosition().left - SNAKE_CONFIG.DIMENSIONS.WIDTH);
                 newHeadPosition = { left: newPosition, top: this.getHeadPosition().top }
                 isCollisionWithPart = this.checkIsCollisionWithPart(newHeadPosition);
@@ -96,10 +111,6 @@ export class Snake {
         return this.parts
             .map(part => part.position)
             .some(partPosition => comparePositionSame(position, partPosition));
-    }
-
-    eat(): void {
-        this.grow();
     }
 
     private updatePartPosition(direction: 'top' | 'left', value: number): void {
@@ -121,7 +132,7 @@ export class Snake {
         }, []);
     }
 
-    grow(): void {
+    private grow(): void {
         const $snakePart = document.createElement('div');
         $snakePart.classList.add('snake-part');
 
@@ -137,7 +148,7 @@ export class Snake {
         eventBus.emit('snake-grow', $snakePart);
     }
 
-    crash(): void {
+    private crash(): void {
         eventBus.emit('snake-crash');
     }
 
@@ -145,36 +156,30 @@ export class Snake {
         window.addEventListener('keydown', ({ code }) => {
             switch(code) {
                 case 'ArrowUp':
-                    if (this.direction === 'down') {
+                    if (this.direction === DIRECTIONS.DOWN) {
                         return;
                     }
-                    this.direction = 'top';
+                    this.direction = DIRECTIONS.TOP;
                     break;
                 case 'ArrowLeft':
-                    if (this.direction === 'right') {
+                    if (this.direction === DIRECTIONS.RIGHT) {
                         return;
                     }
-                    this.direction = 'left';
+                    this.direction = DIRECTIONS.LEFT;
                     break;
                 case 'ArrowRight':
-                    if (this.direction === 'left') {
+                    if (this.direction === DIRECTIONS.LEFT) {
                         return;
                     }
-                    this.direction = 'right';
+                    this.direction = DIRECTIONS.RIGHT;
                     break;
                 case 'ArrowDown':
-                    if (this.direction === 'top') {
+                    if (this.direction === DIRECTIONS.TOP) {
                         return;
                     }
-                    this.direction = 'down';
+                    this.direction = DIRECTIONS.DOWN;
                     break;
             }
         })
-    }
-
-    start(): void {
-        this.setupDirectionListener();
-        // setTimeout(() => 
-        //     this.moveInterval = setInterval(this.move.bind(this), 300), 500);
     }
 }
