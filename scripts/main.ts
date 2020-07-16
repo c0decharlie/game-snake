@@ -5,4 +5,9 @@ const gameController = new GameController({
     borderWidth: 2
 });
 gameController.createGame();
-gameController.startGame();
+
+window.addEventListener('keydown', ({ code }) => {
+    if (code === 'Space') {
+        gameController.startGame();
+    }
+});

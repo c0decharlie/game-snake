@@ -1,7 +1,3 @@
-import { eventBus } from '../eventbus';
-import { Snake } from './snake';
-import { Food } from './food';
-
 export class Board {
     private $instance: HTMLElement;
 

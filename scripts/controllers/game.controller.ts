@@ -3,10 +3,25 @@ import { Food } from '../elements/food';
 import { Board } from '../elements/board';
 import { Snake } from '../elements/snake';
 
+enum DIRECTIONS {
+    TOP,
+    RIGHT,
+    DOWN,
+    LEFT
+}
+
+const KEY_CODES = {
+    ARROW_UP: 'ArrowUp',
+    ARROW_RIGHT: 'ArrowRight',
+    ARROW_DOWN: 'ArrowDown',
+    ARROW_LEFT: 'ArrowLeft'
+}
+
 export class GameController {
     private snake: Snake;
     private board: Board;
-    private moveInterval: number; 
+    private moveInterval: number;
+    private direction = DIRECTIONS.DOWN;
 
     constructor(private config) {
         this.snake = new Snake();
@@ -26,28 +41,27 @@ export class GameController {
     }
 
     public startGame() {
+        this.setupDirectionListener();
         this.startMovement();
     }
 
     private startMovement() {
-        setTimeout(() =>
-            this.moveInterval = setInterval(() => {
-                this.snake.start();
-                this.snake.move();
+        this.moveInterval = setInterval(() => {
+            this.snake.move(this.direction);
 
-                const snakeCurrentPosition = this.snake.getHeadPosition();
-                // check if snake is on same place as food
-                let foodPosition = this.board.getElementPosition('.food');
-                const isOnSamePosition = foodPosition.top === snakeCurrentPosition.top 
-                    && foodPosition.left === snakeCurrentPosition.left;
+            const snakeCurrentPosition = this.snake.getHeadPosition();
+            // check if snake is on same place as food
+            let foodPosition = this.board.getElementPosition('.food');
+            const isOnSamePosition = foodPosition.top === snakeCurrentPosition.top 
+                && foodPosition.left === snakeCurrentPosition.left;
 
-                if (isOnSamePosition) {
-                    this.snake.eat();
-                    document.querySelector('.food').remove();
-                    foodPosition = this.generateFoodPosition();
-                    this.board.appendElement(Food.spawn(foodPosition));
-                }
-            }, 300), 500);
+            if (isOnSamePosition) {
+                this.snake.eat();
+                document.querySelector('.food').remove();
+                foodPosition = this.generateFoodPosition();
+                this.board.appendElement(Food.spawn(foodPosition));
+            }
+        }, 200);
     }
 
     private generateFoodPosition() {
@@ -76,6 +90,38 @@ export class GameController {
            clearInterval(this.moveInterval);
            console.log('game over')
         });
+    }
+
+
+    private setupDirectionListener(): void {
+        window.addEventListener('keydown', ({ code }) => {
+            switch(code) {
+                case KEY_CODES.ARROW_UP:
+                    if (this.direction === DIRECTIONS.DOWN) {
+                        return;
+                    }
+                    this.direction = DIRECTIONS.TOP;
+                    break;
+                case KEY_CODES.ARROW_LEFT:
+                    if (this.direction === DIRECTIONS.RIGHT) {
+                        return;
+                    }
+                    this.direction = DIRECTIONS.LEFT;
+                    break;
+                case KEY_CODES.ARROW_RIGHT:
+                    if (this.direction === DIRECTIONS.LEFT) {
+                        return;
+                    }
+                    this.direction = DIRECTIONS.RIGHT;
+                    break;
+                case KEY_CODES.ARROW_DOWN:
+                    if (this.direction === DIRECTIONS.TOP) {
+                        return;
+                    }
+                    this.direction = DIRECTIONS.DOWN;
+                    break;
+            }
+        })
     }
 }
 

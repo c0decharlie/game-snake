@@ -16,15 +16,10 @@ enum DIRECTIONS {
 
 export class Snake {
     private $instance: HTMLElement;
-    private direction:  DIRECTIONS = DIRECTIONS.DOWN;
     private parts: SnakePart[] = [];
 
     constructor() {
         this.create();
-    }
-
-    public start(): void {
-        this.setupDirectionListener();
     }
 
     public create(): void {
@@ -61,11 +56,11 @@ export class Snake {
         this.grow();
     }
 
-    public move(): void {
+    public move(direction): void {
         let newPosition: number;
         let isCollisionWithPart: boolean;
         let newHeadPosition: Position;
-        switch(this.direction) {
+        switch(direction) {
             case DIRECTIONS.TOP:
                 newPosition = (this.getHeadPosition().top - SNAKE_CONFIG.DIMENSIONS.HEIGHT);
                 newHeadPosition = { top: newPosition, left: this.getHeadPosition().left }
@@ -150,36 +145,5 @@ export class Snake {
 
     private crash(): void {
         eventBus.emit('snake-crash');
-    }
-
-    private setupDirectionListener(): void {
-        window.addEventListener('keydown', ({ code }) => {
-            switch(code) {
-                case 'ArrowUp':
-                    if (this.direction === DIRECTIONS.DOWN) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.TOP;
-                    break;
-                case 'ArrowLeft':
-                    if (this.direction === DIRECTIONS.RIGHT) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.LEFT;
-                    break;
-                case 'ArrowRight':
-                    if (this.direction === DIRECTIONS.LEFT) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.RIGHT;
-                    break;
-                case 'ArrowDown':
-                    if (this.direction === DIRECTIONS.TOP) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.DOWN;
-                    break;
-            }
-        })
     }
 }
