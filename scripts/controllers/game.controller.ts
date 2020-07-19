@@ -2,6 +2,7 @@ import { eventBus } from './../eventbus';
 import { Food } from '../elements/food';
 import { Board } from '../elements/board';
 import { Snake } from '../elements/snake';
+import { getRandomPosition } from '../helpers';
 
 enum DIRECTIONS {
     TOP,
@@ -123,19 +124,4 @@ export class GameController {
             }
         })
     }
-}
-
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-function randomPosition() {
-    return Math.round(getRandomInt(30, 450) / 30) * 30;
-}
-
-function getRandomPosition() {
-    return { top: randomPosition(), left: randomPosition() };
 }
