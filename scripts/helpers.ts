@@ -1,3 +1,4 @@
+import { CreateHTMLElementInterface } from './interfaces/create-html-element.interface';
 import { Position } from './interfaces/position.interface';
 
 export function comparePositionSame(pos1: Position, pos2: Position): boolean {
@@ -16,4 +17,21 @@ export function randomPosition() {
 
 export function getRandomPosition() {
     return { top: randomPosition(), left: randomPosition() };
+}
+
+export function createHTMLElement(element: CreateHTMLElementInterface): HTMLElement {
+    const $element = document.createElement(element.tagName);
+
+    const elementClasses = element.classList.split(' ');
+    elementClasses.forEach(elementClass => $element.classList.add(elementClass));
+
+    if (element.innerHTML) {
+        $element.innerHTML = element.innerHTML;
+    }
+    
+    return $element;
+}
+
+export function createHTMLElements(elements: CreateHTMLElementInterface[]): HTMLElement[] {
+    return elements.map(createHTMLElement);
 }

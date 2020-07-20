@@ -19,6 +19,7 @@ const KEY_CODES = {
 }
 
 export class GameController {
+    public isGameStarted = false;
     private snake: Snake;
     private board: Board;
     private moveInterval: number;
@@ -44,6 +45,7 @@ export class GameController {
     public startGame() {
         this.setupDirectionListener();
         this.startMovement();
+        this.isGameStarted = true;
     }
 
     private startMovement() {
@@ -89,6 +91,7 @@ export class GameController {
 
         eventBus.on('snake-crash', () => {
            clearInterval(this.moveInterval);
+           this.isGameStarted = false;
            console.log('game over')
         });
     }
