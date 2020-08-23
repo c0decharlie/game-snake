@@ -37,6 +37,10 @@ body {
     z-index: 1000;
 }
 
+.score-board {
+    text-align: center;
+}
+
 .food {
     background-color: black;
     width: 30px;

@@ -3,6 +3,7 @@ import { Food } from '../elements/food';
 import { Board } from '../elements/board';
 import { Snake } from '../elements/snake';
 import { getRandomPosition } from '../helpers';
+import { ScoreBoard } from './../elements/score-board';
 
 enum DIRECTIONS {
     TOP,
@@ -22,6 +23,7 @@ export class GameController {
     public isGameStarted = false;
     private snake: Snake;
     private board: Board;
+    private scoreBoard: ScoreBoard;
     private moveInterval: number;
     private direction = DIRECTIONS.DOWN;
 
@@ -30,11 +32,14 @@ export class GameController {
         this.board = new Board(config);
     }
     
-    public createGame() {
+    public createGame(): void {
         this.board.appendElement(this.snake.getSnake());
 
         const $gameContainer = document.getElementById(this.config.container);
         $gameContainer.appendChild(this.board.getInstance());
+
+        this.scoreBoard = new ScoreBoard();
+        $gameContainer.appendChild(this.scoreBoard.getElement());
 
         const foodPosition = this.generateFoodPosition();
         this.board.appendElement(Food.spawn(foodPosition));
@@ -42,13 +47,13 @@ export class GameController {
         this.setupGameListeners();
     }
 
-    public startGame() {
+    public startGame(): void {
         this.setupDirectionListener();
         this.startMovement();
         this.isGameStarted = true;
     }
 
-    private startMovement() {
+    private startMovement(): void {
         this.moveInterval = setInterval(() => {
             this.snake.move(this.direction);
 
@@ -60,6 +65,7 @@ export class GameController {
 
             if (isOnSamePosition) {
                 this.snake.eat();
+                this.scoreBoard.updateScore(10);
                 document.querySelector('.food').remove();
                 foodPosition = this.generateFoodPosition();
                 this.board.appendElement(Food.spawn(foodPosition));
@@ -67,7 +73,7 @@ export class GameController {
         }, 200);
     }
 
-    private generateFoodPosition() {
+    private generateFoodPosition(): {left: number, top: number} {
         const generatedPosition = getRandomPosition();
         const snakePartsPosition = this.snake.getPosition();
 
@@ -83,7 +89,7 @@ export class GameController {
         return generatedPosition;
     }
 
-    private setupGameListeners() {
+    private setupGameListeners(): void {
         eventBus.on('snake-grow', snakePart => {
             console.log('board snake grow')
             this.board.appendElement(snakePart)
