@@ -2,8 +2,9 @@ import { eventBus } from './../eventbus';
 import { Food } from '../elements/food';
 import { Board } from '../elements/board';
 import { Snake } from '../elements/snake';
-import { getRandomPosition } from '../helpers';
+import { getRandomPosition, comparePositionSame } from '../helpers';
 import { ScoreBoard } from './../elements/score-board';
+import { Alert } from './../elements/alert';
 
 enum DIRECTIONS {
     TOP,
@@ -24,12 +25,14 @@ export class GameController {
     private snake: Snake;
     private board: Board;
     private scoreBoard: ScoreBoard;
+    private alert: Alert;
     private moveInterval: number;
     private direction = DIRECTIONS.DOWN;
 
     constructor(private config) {
         this.snake = new Snake();
         this.board = new Board(config);
+        this.setupWindowListeners();
     }
     
     public createGame(): void {
@@ -44,11 +47,16 @@ export class GameController {
         const foodPosition = this.generateFoodPosition();
         this.board.appendElement(Food.spawn(foodPosition));
 
-        this.setupGameListeners();
+        this.alert = new Alert();
+        this.alert.setContent({
+            title: 'Press space to start game'
+        });
+        this.alert.open();
+
+        this.setupEventBusListeners();
     }
 
     public startGame(): void {
-        this.setupDirectionListener();
         this.startMovement();
         this.isGameStarted = true;
     }
@@ -60,8 +68,7 @@ export class GameController {
             const snakeCurrentPosition = this.snake.getHeadPosition();
             // check if snake is on same place as food
             let foodPosition = this.board.getElementPosition('.food');
-            const isOnSamePosition = foodPosition.top === snakeCurrentPosition.top 
-                && foodPosition.left === snakeCurrentPosition.left;
+            const isOnSamePosition = comparePositionSame(foodPosition, snakeCurrentPosition);
 
             if (isOnSamePosition) {
                 this.snake.eat();
@@ -89,48 +96,62 @@ export class GameController {
         return generatedPosition;
     }
 
-    private setupGameListeners(): void {
+    private setupEventBusListeners(): void {
         eventBus.on('snake-grow', snakePart => {
             console.log('board snake grow')
             this.board.appendElement(snakePart)
         });
 
-        eventBus.on('snake-crash', () => {
-           clearInterval(this.moveInterval);
+        eventBus.on('snake-crash',this.endGame.bind(this));
+    }
+
+    private endGame(): void {
+        clearInterval(this.moveInterval);
            this.isGameStarted = false;
-           console.log('game over')
+           this.alert.setContent({
+               title: 'Game over!',
+               message: 'Press space to play again'
+           });
+           this.alert.open();
+    }
+
+    private setupWindowListeners(): void {
+        window.addEventListener('keydown', ({code}: KeyboardEvent) => {
+            if (code === 'Space' && !this.isGameStarted) {
+                console.log('space')
+                this.alert.close();
+                this.startGame();
+            }
+            this.setDirection(code);
         });
     }
 
-
-    private setupDirectionListener(): void {
-        window.addEventListener('keydown', ({ code }) => {
-            switch(code) {
-                case KEY_CODES.ARROW_UP:
-                    if (this.direction === DIRECTIONS.DOWN) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.TOP;
-                    break;
-                case KEY_CODES.ARROW_LEFT:
-                    if (this.direction === DIRECTIONS.RIGHT) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.LEFT;
-                    break;
-                case KEY_CODES.ARROW_RIGHT:
-                    if (this.direction === DIRECTIONS.LEFT) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.RIGHT;
-                    break;
-                case KEY_CODES.ARROW_DOWN:
-                    if (this.direction === DIRECTIONS.TOP) {
-                        return;
-                    }
-                    this.direction = DIRECTIONS.DOWN;
-                    break;
-            }
-        })
+    private setDirection(keyCode: string): void {
+        switch(keyCode) {
+            case KEY_CODES.ARROW_UP:
+                if (this.direction === DIRECTIONS.DOWN) {
+                    return;
+                }
+                this.direction = DIRECTIONS.TOP;
+                break;
+            case KEY_CODES.ARROW_LEFT:
+                if (this.direction === DIRECTIONS.RIGHT) {
+                    return;
+                }
+                this.direction = DIRECTIONS.LEFT;
+                break;
+            case KEY_CODES.ARROW_RIGHT:
+                if (this.direction === DIRECTIONS.LEFT) {
+                    return;
+                }
+                this.direction = DIRECTIONS.RIGHT;
+                break;
+            case KEY_CODES.ARROW_DOWN:
+                if (this.direction === DIRECTIONS.TOP) {
+                    return;
+                }
+                this.direction = DIRECTIONS.DOWN;
+                break;
+        }
     }
 }
