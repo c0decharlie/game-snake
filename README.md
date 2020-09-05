@@ -5,11 +5,9 @@ Classic snake game implemented in typescript with parcel bundler.
 ## Installation
 
 Run:
-
-`$ npm install`
+> $ npm install
 
 then:
-
-`$ npm start`
+> $ npm start
 
 open `localhost:1234` in web browser. Enjoy :boom:
