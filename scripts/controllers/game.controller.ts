@@ -107,10 +107,9 @@ export class GameController {
 
     private endGame(): void {
         clearInterval(this.moveInterval);
-           this.isGameStarted = false;
            this.alert.setContent({
                title: 'Game over!',
-               message: 'Press space to play again'
+               message: 'Refresh the page to try again.'
            });
            this.alert.open();
     }
