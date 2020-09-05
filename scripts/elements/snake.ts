@@ -2,17 +2,10 @@ import cloneDeep from 'lodash.clonedeep';
 
 import { Position } from './../interfaces/position.interface';
 import { SnakePart } from '../interfaces/snake.interface';
-
+import { DIRECTIONS } from './../interfaces/direction.enum';
 import { SNAKE_CONFIG, BOARD_DIMENSIONS } from '../config';
 import { eventBus } from '../eventbus';
 import { comparePositionSame } from '../helpers';
-
-enum DIRECTIONS {
-    TOP,
-    RIGHT,
-    DOWN,
-    LEFT
-}
 
 export class Snake {
     private $instance: HTMLElement;
@@ -137,7 +130,7 @@ export class Snake {
 
         this.parts.push({
             $element: $snakePart,
-            position 
+            position
         });
 
         eventBus.emit('snake-grow', $snakePart);

@@ -5,13 +5,7 @@ import { Snake } from '../elements/snake';
 import { getRandomPosition, comparePositionSame } from '../helpers';
 import { ScoreBoard } from './../elements/score-board';
 import { Alert } from './../elements/alert';
-
-enum DIRECTIONS {
-    TOP,
-    RIGHT,
-    DOWN,
-    LEFT
-}
+import { DIRECTIONS } from './../interfaces/direction.enum';
 
 const KEY_CODES = {
     ARROW_UP: 'ArrowUp',
@@ -31,7 +25,7 @@ export class GameController {
 
     constructor(private config) {
         this.snake = new Snake();
-        this.board = new Board(config);
+        this.board = new Board();
         this.setupWindowListeners();
     }
     

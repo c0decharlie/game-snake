@@ -1,21 +1,23 @@
+import { BOARD_DIMENSIONS } from './../config';
+
 export class Board {
     private $instance: HTMLElement;
 
-    constructor(private config) {
+    constructor() {
         this.create();
     }
 
     getInnerOffset() {
         return { 
-            top: this.$instance.offsetTop + this.config.borderWidth,
-            left: this.$instance.offsetLeft + this.config.borderWidth
+            top: this.$instance.offsetTop + BOARD_DIMENSIONS.BORDER_WIDTH,
+            left: this.$instance.offsetLeft + BOARD_DIMENSIONS.BORDER_WIDTH
         }
     }
 
     create(): void {
         this.$instance = document.createElement('div');
         this.$instance.classList.add('board');
-        this.$instance.style.borderWidth = this.config.borderWidth + 'px';
+        this.$instance.style.borderWidth = BOARD_DIMENSIONS.BORDER_WIDTH + 'px';
     }
 
     appendElement(element: HTMLElement): void {

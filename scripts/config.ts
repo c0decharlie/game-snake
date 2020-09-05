@@ -1,6 +1,7 @@
 export const BOARD_DIMENSIONS = {
     WIDTH: 480,
-    HEIGHT: 480
+    HEIGHT: 480,
+    BORDER_WIDTH: 2
 }
 
 export const SNAKE_CONFIG = {
